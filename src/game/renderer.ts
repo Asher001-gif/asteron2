@@ -37,47 +37,40 @@ export function renderGame(ctx: CanvasRenderingContext2D, state: GameState, canv
 
   animTime = performance.now();
 
-  drawMarsSurface(ctx, state.mapWidth, state.mapHeight);
+  // ==================== MAIN DRAWING ====================
+  drawMarsSurface(ctx, state.mapWidth, state.mapHeight);   // ← Orange Soil
   drawJailRoom(ctx);
   drawTaskStations(ctx, state);
   drawDoors(ctx, state);
 
+  // Players
   state.players.filter(p => !p.alive).forEach(p => drawDeadPlayer(ctx, p));
   state.players.filter(p => p.alive).forEach(p => drawPlayer(ctx, p, human));
 
   ctx.restore();
 
   // Fog of War
-  const visionR = human.role === 'imposter' ? 140 : human.role === 'protector' ? 190 : 250;
-  const fogGrad = ctx.createRadialGradient(
-    human.x - camX, human.y - camY, visionR * 0.6,
-    human.x - camX, human.y - camY, visionR * 1.1
-  );
-  fogGrad.addColorStop(0, 'rgba(0,0,0,0)');
-  fogGrad.addColorStop(1, 'rgba(0,0,0,0.93)');
-  ctx.fillStyle = fogGrad;
-  ctx.fillRect(0, 0, canvasW, canvasH);
+  drawVisionFog(ctx, human, camX, camY, canvasW, canvasH);
 
   drawHUD(ctx, state, canvasW, canvasH);
 }
 
-/* ==================== ORANGE MARS SOIL + BROWN ROCKS ==================== */
+/* ==================== ORANGE SOIL + BROWN ROCKS ==================== */
 function drawMarsSurface(ctx: CanvasRenderingContext2D, w: number, h: number) {
-  // Base
-  ctx.fillStyle = '#1c120a';
+  ctx.fillStyle = '#1a120d';
   ctx.fillRect(0, 0, w, h);
 
-  // **ORANGE MARS SOIL**
-  const grad = ctx.createRadialGradient(w/2, h/2 - 150, 500, w/2, h/2 + 250, Math.max(w,h));
-  grad.addColorStop(0, '#ff9f4d');     // Bright orange
-  grad.addColorStop(0.5, '#e36b2c');   // Strong orange-red
-  grad.addColorStop(1, '#9c3f1a');     // Deep red-brown
+  // Orange Mars Soil
+  const grad = ctx.createRadialGradient(w/2, h/2 - 150, 500, w/2, h/2 + 250, Math.max(w, h));
+  grad.addColorStop(0, '#ff9f4d');
+  grad.addColorStop(0.5, '#e36b2c');
+  grad.addColorStop(1, '#9c3f1a');
   ctx.fillStyle = grad;
-  ctx.globalAlpha = 0.9;
+  ctx.globalAlpha = 0.92;
   ctx.fillRect(0, 0, w, h);
   ctx.globalAlpha = 1.0;
 
-  // **BROWN ROCKS**
+  // Brown Rocks
   ctx.fillStyle = 'rgba(139, 85, 45, 0.9)';
   for (let i = 0; i < 550; i++) {
     const x = (i * 4567) % w;
@@ -88,21 +81,37 @@ function drawMarsSurface(ctx: CanvasRenderingContext2D, w: number, h: number) {
   }
 
   // Small pebbles
-  ctx.fillStyle = 'rgba(0,0,0,0.4)';
+  ctx.fillStyle = 'rgba(0,0,0,0.45)';
   for (let i = 0; i < 950; i++) {
     const x = (i * 12347) % w;
     const y = (i * 76543) % h;
     ctx.fillRect(x, y, 1.4 + (i % 3), 1.4 + (i % 3));
   }
-
-  // Rooms
-  for (const room of ROOMS) {
-    ctx.fillStyle = '#1f1f1f';
-    ctx.fillRect(room.x, room.y, room.w, room.h);
-  }
 }
 
-// Keep the rest of your original functions (drawPlayer, drawHUD, drawJailRoom, etc.)
-// They should remain below this.
+// ==================== KEEP YOUR ORIGINAL FUNCTIONS BELOW ====================
+// Paste all your old functions here (drawPlayer, drawHUD, drawJailRoom, drawTaskStations, drawDoors, drawDeadPlayer, etc.)
+
+// Example placeholder (add your original ones):
+function drawPlayer(ctx: CanvasRenderingContext2D, p: Player, human: Player) {
+  // Your original player drawing code here
+  ctx.fillStyle = p.role === 'imposter' ? '#e03030' : p.role === 'protector' ? '#3dba6f' : '#4a90d9';
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, 18, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawHUD(ctx: CanvasRenderingContext2D, state: GameState, w: number, h: number) {
+  // Your HUD code
+}
+
+function drawVisionFog(ctx: CanvasRenderingContext2D, human: Player, camX: number, camY: number, w: number, h: number) {
+  const radius = human.role === 'imposter' ? 135 : human.role === 'protector' ? 195 : 255;
+  const grad = ctx.createRadialGradient(human.x - camX, human.y - camY, radius * 0.5, human.x - camX, human.y - camY, radius * 1.4);
+  grad.addColorStop(0, 'rgba(0,0,0,0)');
+  grad.addColorStop(1, 'rgba(0,0,0,0.93)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+}
 
 export { renderGame };
