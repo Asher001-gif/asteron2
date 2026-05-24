@@ -17,9 +17,12 @@ function loadSprite(key: string, src: string) {
   SPRITES[key] = img;
 }
 
-loadSprite('crew', crewA);
-loadSprite('protector', protA);
-loadSprite('traitor', traitorA);
+loadSprite('crew_a', crewA);
+loadSprite('crew_b', crewB);
+loadSprite('protector_a', protA);
+loadSprite('protector_b', protB);
+loadSprite('traitor_a', traitorA);
+loadSprite('traitor_b', traitorB);
 
 let animTime = 0;
 
@@ -45,72 +48,71 @@ export function renderGame(
   drawDoors(ctx, state);
   drawVents(ctx, state.vents || []);
 
-  // Draw dead players first
+  // Players
   state.players.filter(p => !p.alive).forEach(p => drawDeadPlayer(ctx, p));
-  // Draw alive players
   state.players.filter(p => p.alive).forEach(p => drawPlayer(ctx, p, human));
 
   ctx.restore();
 
-  // Vision Fog
+  // Fog of War
   drawVisionFog(ctx, human, camX, camY, canvasW, canvasH);
 
   drawHUD(ctx, state, canvasW, canvasH);
-  drawKillFeed(ctx, state, canvasW, canvasH);
+  drawKillFeed(ctx, state, canvasW);
 }
 
-// ==================== MAIN SOIL - ORANGE MARS ====================
+/* ==================== ORANGE MARS SOIL + BROWN ROCKS (2.5D Feel) ==================== */
 function drawMarsSurface(ctx: CanvasRenderingContext2D, w: number, h: number) {
-  // Base dark soil
-  ctx.fillStyle = '#2c1e14';
+  // Base dark layer
+  ctx.fillStyle = '#1a120d';
   ctx.fillRect(0, 0, w, h);
 
-  // Orange Mars gradient
-  const grad = ctx.createRadialGradient(w/2, h/2 - 100, 500, w/2, h/2 + 200, Math.max(w, h));
-  grad.addColorStop(0, '#e07a4a');   // Bright orange
-  grad.addColorStop(0.6, '#c15d32'); // Medium orange-red
-  grad.addColorStop(1, '#8b3a1f');   // Deep reddish brown
-  ctx.fillStyle = grad;
-  ctx.globalAlpha = 0.75;
+  // Rich Orange Mars Soil
+  const soilGrad = ctx.createRadialGradient(w/2, h/2 - 180, 400, w/2, h/2 + 220, Math.max(w, h));
+  soilGrad.addColorStop(0, '#ff9f4d');
+  soilGrad.addColorStop(0.45, '#e36b2c');
+  soilGrad.addColorStop(1, '#9c3f1a');
+  ctx.fillStyle = soilGrad;
+  ctx.globalAlpha = 0.88;
   ctx.fillRect(0, 0, w, h);
   ctx.globalAlpha = 1.0;
 
-  // Brown Rocks
-  ctx.fillStyle = 'rgba(139, 85, 55, 0.8)';
-  for (let i = 0; i < 480; i++) {
+  // Brown Rocks (2.5D depth)
+  ctx.fillStyle = 'rgba(139, 85, 45, 0.9)';
+  for (let i = 0; i < 550; i++) {
     const x = (i * 4567) % w;
     const y = (i * 98765) % h;
+    const size = 2.0 + (i % 5);
     ctx.beginPath();
-    ctx.arc(x, y, 2.2 + (i % 4), 0, Math.PI * 2);
+    ctx.arc(x, y, size, 0, Math.PI * 2);
     ctx.fill();
   }
 
-  // Small dark pebbles
+  // Small pebbles
   ctx.fillStyle = 'rgba(0,0,0,0.45)';
-  for (let i = 0; i < 850; i++) {
+  for (let i = 0; i < 950; i++) {
     const x = (i * 12347) % w;
     const y = (i * 76543) % h;
-    const size = 1.1 + (i % 4);
-    ctx.fillRect(x, y, size, size);
+    ctx.fillRect(x, y, 1.4 + (i % 3), 1.4 + (i % 3));
   }
 }
 
 function drawVents(ctx: CanvasRenderingContext2D, vents: any[]) {
-  ctx.strokeStyle = '#5577aa';
-  ctx.lineWidth = 9;
+  ctx.strokeStyle = '#6688bb';
+  ctx.lineWidth = 10;
   vents.forEach(v => {
     ctx.beginPath();
-    ctx.arc(v.x, v.y, 33, 0, Math.PI * 2);
+    ctx.arc(v.x, v.y, 34, 0, Math.PI * 2);
     ctx.stroke();
 
     ctx.fillStyle = '#1a2333';
     ctx.beginPath();
-    ctx.arc(v.x, v.y, 21, 0, Math.PI * 2);
+    ctx.arc(v.x, v.y, 22, 0, Math.PI * 2);
     ctx.fill();
   });
 }
 
-function drawKillFeed(ctx: CanvasRenderingContext2D, state: GameState, w: number, h: number) {
+function drawKillFeed(ctx: CanvasRenderingContext2D, state: GameState, w: number) {
   ctx.textAlign = 'right';
   ctx.font = 'bold 15px monospace';
   const now = Date.now();
@@ -126,13 +128,15 @@ function drawVisionFog(ctx: CanvasRenderingContext2D, human: Player, camX: numbe
   const radius = human.role === 'imposter' ? 135 : human.role === 'protector' ? 195 : 255;
   const grad = ctx.createRadialGradient(
     human.x - camX, human.y - camY, radius * 0.5,
-    human.x - camX, human.y - camY, radius * 1.4
+    human.x - camX, human.y - camY, radius * 1.45
   );
   grad.addColorStop(0, 'rgba(0,0,0,0)');
-  grad.addColorStop(1, 'rgba(5,4,12,0.94)');
+  grad.addColorStop(1, 'rgba(5, 4, 12, 0.95)');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, w, h);
 }
 
-// Keep your original functions (drawPlayer, drawHUD, drawJailRoom, drawTaskStations, drawDoors, drawDeadPlayer)
+// Keep your original functions below (drawPlayer, drawHUD, drawJailRoom, drawTaskStations, drawDoors, drawDeadPlayer)
+// They should still be in the file.
+
 export { renderGame };
