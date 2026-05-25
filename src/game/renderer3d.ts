@@ -63,8 +63,8 @@ export class Renderer3D {
 
     this.camera = new THREE.PerspectiveCamera(72, 1, 1, 900);
 
-    // Fog produces vision falloff; far value updated per role each frame.
-    this.fog = new THREE.Fog(0x06070b, 60, 260);
+       // Mars dusty atmosphere fog
+    this.fog = new THREE.Fog(0xc96a4a, 500, 1350);
     this.scene.fog = this.fog;
 
     this.ambient = new THREE.HemisphereLight(0xeaf0ff, 0x222633, 1.15);
