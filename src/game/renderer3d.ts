@@ -99,7 +99,7 @@ const wallMat = new THREE.MeshLambertMaterial({
       const dz = w.y2 - w.y1;
       const len = Math.hypot(dx, dz);
       if (len < 1) continue;
-      const geo = new THREE.BoxGeometry(len, 44, 6);
+      const geo = new THREE.BoxGeometry(len, 50, 12);   // Taller + Thicker
       const mesh = new THREE.Mesh(geo, wallMat);
       mesh.position.set((w.x1 + w.x2) / 2, 22, -(w.y1 + w.y2) / 2);
       mesh.rotation.y = Math.atan2(dz, dx);
