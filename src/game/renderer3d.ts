@@ -87,8 +87,13 @@ this.ground = new THREE.Mesh(groundGeo, groundMat);
   }
 
   private buildStaticGeometry() {
-    // Walls from segments → thin black boxes
-    const wallMat = new THREE.MeshLambertMaterial({ color: 0x0a0a0c });
+  // Improved walls - more realistic look
+const wallMat = new THREE.MeshLambertMaterial({ 
+    color: 0x555555,           // Gray metal/industrial look
+    // color: 0x8B5A2B,        // Try this for rusty/warm look
+    roughness: 0.9,            // Makes it less shiny
+    metalness: 0.2
+});
     for (const w of ROOM_WALLS) {
       const dx = w.x2 - w.x1;
       const dz = w.y2 - w.y1;
