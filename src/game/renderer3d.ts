@@ -73,10 +73,12 @@ export class Renderer3D {
     this.texBlue = makeKeyedTexture(robotBlueUrl);
     this.texGreen = makeKeyedTexture(robotGreenUrl);
 
-    // Outer ground (dark)
-    const groundGeo = new THREE.PlaneGeometry(2000, 1500);
-    const groundMat = new THREE.MeshLambertMaterial({ color: 0x111318 });
-    this.ground = new THREE.Mesh(groundGeo, groundMat);
+   // Outer ground (orange)
+const groundGeo = new THREE.PlaneGeometry(2000, 1500);
+const groundMat = new THREE.MeshLambertMaterial({ 
+    color: 0xff6600   // Nice bright orange
+});
+this.ground = new THREE.Mesh(groundGeo, groundMat);
     this.ground.rotation.x = -Math.PI / 2;
     this.ground.position.set(800, 0, -600);
     this.scene.add(this.ground);
