@@ -73,10 +73,11 @@ export class Renderer3D {
     this.texBlue = makeKeyedTexture(robotBlueUrl);
     this.texGreen = makeKeyedTexture(robotGreenUrl);
 
-   // Outer ground (orange)
+ // Outer ground - Mars style (lightweight)
 const groundGeo = new THREE.PlaneGeometry(2000, 1500);
 const groundMat = new THREE.MeshLambertMaterial({ 
-    color: 0xff6600   // Nice bright orange
+    color: 0xc1442a,           // Martian reddish-orange
+    // color: 0xd16e4f,        // Alternative warmer tone
 });
 this.ground = new THREE.Mesh(groundGeo, groundMat);
     this.ground.rotation.x = -Math.PI / 2;
@@ -116,8 +117,8 @@ const wallMat = new THREE.MeshLambertMaterial({
       this.scene.add(m);
     }
 
-    // Obstacles → simple rocks
-    const rockMat = new THREE.MeshLambertMaterial({ color: 0x2a2c33 });
+    // Obstacles → Mars rocks
+const rockMat = new THREE.MeshLambertMaterial({ color: 0x8b4a38 });
     for (const o of OBSTACLES) {
       const geo = new THREE.DodecahedronGeometry(o.r, 0);
       const m = new THREE.Mesh(geo, rockMat);
