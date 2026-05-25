@@ -51,6 +51,8 @@ export class Renderer3D {
   private ground: THREE.Mesh;
   private texBlue: THREE.Texture;
   private texGreen: THREE.Texture;
+  private startTime: number = 0;
+  private stormStarted: boolean = false;
 
   constructor(canvas: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({
@@ -59,9 +61,19 @@ export class Renderer3D {
       powerPreference: 'low-power',
     });
     this.renderer.setPixelRatio(1);
-    this.renderer.setClearColor(0x05060a, 1);
+   // Initial Mars Clear Sky
+    this.renderer.setClearColor(0x9c4a2f, 1);   // Bright Mars sky
 
     this.camera = new THREE.PerspectiveCamera(72, 1, 1, 900);
+
+    // Initial good visibility (Mars)
+    this.fog = new THREE.Fog(0xc96a4a, 500, 1350);
+    this.scene.fog = this.fog;
+
+    this.ambient = new THREE.HemisphereLight(0xffbb88, 0x442211, 1.1);
+    this.scene.add(this.ambient);
+
+    this.startTime = Date.now();
 
        // Mars dusty atmosphere fog
     this.fog = new THREE.Fog(0xc96a4a, 500, 1350);
